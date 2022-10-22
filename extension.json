@@ -2,9 +2,9 @@
     "version": "v1",
     "aliases": [
         {
-            "name": "",
-            "description": "",
-            "command": "devices list",
+            "name": "ext-device",
+            "description": "Get device by external identity",
+            "command": "identity get --type \"c8y_Serial\" --name \"$1\"",
             "shell": false
         }
     ]
