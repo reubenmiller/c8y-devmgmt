@@ -11,7 +11,7 @@
                 "type",
                 "owner",
                 "lastUpdated",
-                "c8y_Availability.status"
+                "c8y_Availability.status",
                 "c8y_Connection.status"
             ]
         }
