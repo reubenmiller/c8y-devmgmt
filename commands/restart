@@ -3,14 +3,17 @@ set -e
 
 help() {
   cat <<EOF
+Restart a device by sending it an operation
+
 Usage:
-    c8y devmgmt restart --device <device>
+    c8y devmgmt restart --device <id|name>
+
+Examples:
+    c8y devmgmt restart --device 12345
     # Restart a single device
 
     c8y devices list | c8y devmgmt restart
     # Restart a list of devices
-
-Restart a device by sending it an operation
 EOF
 }
 

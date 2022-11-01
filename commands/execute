@@ -3,7 +3,12 @@ set -e
 
 help() {
   cat <<EOF
+Execute a command on a device using an operation
+
 Usage:
+    c8y devmgmt execute <command> --device <device>
+
+Examples:
     c8y devmgmt execute "ls -l" --device 12345
     # Execute a shell command on a device
 
@@ -12,9 +17,6 @@ Usage:
 
     c8y devices list | c8y devmgmt execute "ls -l"
     # Execute a shell command on multiple devices
-
-Execute a command on a device using an operation
-c8y devmgmt execute <command> --device <device>
 EOF
 }
 
