@@ -1,0 +1,23 @@
+{
+    "version": "1",
+    "definitions": [
+        {
+            "name": "datapoint",
+            "type": "c8y_Kpi",
+            "priority": 400,
+            "columns": [
+                "id",
+                "name",
+                "c8y_Kpi.label",
+                "c8y_Kpi.description",
+                "c8y_Kpi.fragment",
+                "c8y_Kpi.series",
+                "c8y_Kpi.unit",
+                "c8y_Kpi.min",
+                "c8y_Kpi.max",
+                "owner",
+                "lastUpdated"
+            ]
+        }
+    ]
+}
