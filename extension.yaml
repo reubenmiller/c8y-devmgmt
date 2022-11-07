@@ -1,4 +1,2 @@
-{
-    "version": "v1",
-    "aliases": []
-}
+version: v1
+aliases: []
