@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -e
+
+# Describe how to use your command
+help() {
+  cat <<EOF
+Cancel executing operations
+
+Usage:
+    c8y tedge cancelExecuting <device> [FLAGS]
+
+Flags:
+    Only globals
+
+Examples:
+    c8y devmgmt devices cancelExecuting 12345
+    \$ Cancel executing operations for device id 12345
+EOF
+}
+
+# # Parse options for flags with values: --flag <value>, or boolean/switch flags: --help|-h
+DEVICE_ID=
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--help)
+            help
+            exit 0
+            ;;
+        
+        -*)
+            REST_ARGS+=("$1")
+            ;;
+        *)
+            DEVICE_ID="$1"
+            ;;
+    esac
+    shift
+done
+
+# # Reset additional arguments which can then be referenced via "$@"
+set -- "${REST_ARGS[@]}"
+
+if [ -z "$DEVICE_ID" ]; then
+    help
+    exit 1
+fi
+
+c8y operations list --device "$DEVICE_ID" | c8y operaiton update --status FAILED --failureReason "User cancelled operation" "$@"
