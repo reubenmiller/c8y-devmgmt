@@ -46,4 +46,4 @@ if [ -z "$DEVICE_ID" ]; then
     exit 1
 fi
 
-c8y operations list --device "$DEVICE_ID" | c8y operaiton update --status FAILED --failureReason "User cancelled operation" "$@"
+c8y operations list --device "$DEVICE_ID" --status EXECUTING | c8y operations update --status FAILED --failureReason "User cancelled operation" "$@"
