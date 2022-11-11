@@ -2,7 +2,7 @@
 
 # c8y-devmgmt
 
-go-c8y-cli extension to set sensible defaults such as views to focus on the important information only.
+go-c8y-cli extension to provide some device management features.
 
 ## What is included?
 
