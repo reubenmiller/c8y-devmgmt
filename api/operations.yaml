@@ -1,0 +1,135 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/feat/extensions-manager/tools/schema/extensionCommands.json
+---
+version: v1
+group:
+  name: operations
+  description: Operations
+
+commands:
+  - name: execute
+    description: Execute shell command
+    descriptionLong: Execute a shell command on the device via c8y_Command
+    method: POST
+    path: devicecontrol/operations
+    exampleList:
+      - description: Execute a shell command on a device
+        command: c8y devmgmt shell execute --device 12345 --command "ls -l"
+    body:
+      - name: device
+        type: '[]device'
+        property: deviceId
+        required: true
+        pipeline: true
+        description: Identifies the target device on which this operation should be performed.
+
+      - name: description
+        type: string
+        description: Text description of the operation.
+        default: Execute command
+
+      - name: command
+        type: string
+        property: c8y_Command.text
+        required: true
+        description: Command to execute
+  
+  - name: restart
+    description: Restart device
+    descriptionLong: Restart device via the c8y_Restart operation
+    method: POST
+    path: devicecontrol/operations
+    exampleList:
+      - description: Restart a device
+        command: c8y devmgmt shell restart --device 12345
+    body:
+      - name: device
+        type: '[]device'
+        property: deviceId
+        required: true
+        pipeline: true
+        description: Identifies the target device on which this operation should be performed.
+
+      - name: description
+        type: string
+        description: Text description of the operation.
+        default: Restart device
+    
+    bodyTemplates:
+      - type: jsonnet
+        template: "{c8y_Restart:{}}"
+
+  - name: getLogFile
+    description: Get log file
+    descriptionLong: Get log file
+    method: POST
+    path: devicecontrol/operations
+    exampleList:
+      - description: Restart a device
+        command: c8y devmgmt shell getLogFile --device 12345
+    body:
+      - name: device
+        type: '[]device'
+        property: deviceId
+        required: true
+        pipeline: true
+        description: Identifies the target device on which this operation should be performed.
+      
+      - name: type
+        property: c8y_LogfileRequest.logFile
+        type: string
+        default: ""
+        description: Log file type
+        required: true
+
+      - name: description
+        type: string
+        description: Text description of the operation.
+
+      - name: dateFrom
+        property: c8y_LogfileRequest.dateFrom
+        type: datetime
+        default: "-8h"
+        description: Date from filter
+
+      - name: dateTo
+        property: c8y_LogfileRequest.dateTo
+        type: datetime
+        default: "0s"
+        description: Date to filter
+
+      - name: searchText
+        property: c8y_LogfileRequest.searchText
+        type: string
+        default: ""
+        description: Search text
+
+      - name: maximumLines
+        property: c8y_LogfileRequest.maximumLines
+        type: integer
+        default: "1000"
+        description: Maximum lines
+
+  - name: cancel
+    description: Cancel operations
+    descriptionLong: Cancel operations
+    method: PUT
+    path: devicecontrol/operations/{id}
+    exampleList:
+      - description: Cancel all executing operations for a single device
+        command: c8y operations list --device 1234 --status EXECUTING | c8y devmgmt operations cancel
+    pathParameters:
+      - name: id
+        type: '[]id'
+        required: true
+        pipeline: true
+        description: Operation id
+    body:
+      - name: status
+        type: string
+        description: Text description of the operation.
+        default: FAILED
+      
+      - name: failureReason
+        type: string
+        description: Failure reason
+        default: User cancelled operation

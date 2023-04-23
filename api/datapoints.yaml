@@ -1,0 +1,202 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/feat/extensions-manager/tools/schema/extensionCommands.json
+---
+version: v1
+group:
+  name: datapoints
+  description: Cumulocity IoT Datapoint library
+
+commands:
+  - name: list
+    description: Get a datapoint collection
+    method: GET
+    path: inventory/managedObjects
+    queryParameters:
+      - name: query
+        property: query
+        type: queryExpression
+        description: Query expression
+        children:
+          - name: staticFragment
+            type: stringStatic
+            description: ""
+            hidden: true
+            value: "has(c8y_Kpi)"
+
+          - name: name
+            type: string
+            description: Filter by name
+            format: (name eq '%s')
+
+          - name: label
+            type: string
+            description: Filter by label
+            format: (c8y_Kpi.label eq '%s')
+
+          - name: description
+            type: string
+            description: Filter by description
+            format: (c8y_Kpi.description eq '%s')
+
+          - name: fragment
+            type: string
+            description: Filter by fragment
+            format: (c8y_Kpi.fragment eq '%s')
+
+          - name: series
+            type: string
+            description: Filter by series
+            format: (c8y_Kpi.series eq '%s')
+
+          - name: unit
+            type: string
+            description: Filter by unit
+            format: (c8y_Kpi.unit eq '%s')
+
+          - name: orderBy
+            type: string
+            default: label
+            description: Order by. e.g. _id asc or name asc or creationTime.date desc
+
+  - name: create
+    description: Create a datapoint
+    method: POST
+    path: inventory/managedObjects
+    body:
+      - name: name
+        type: string
+        required: true
+        description: Name
+
+      - name: description
+        type: string
+        property: c8y_Kpi.description
+        description: Description
+
+      - name: label
+        type: string
+        property: c8y_Kpi.label
+        description: Label
+
+      - name: fragment
+        type: string
+        property: c8y_Kpi.fragment
+        description: Fragment
+        required: true
+
+      - name: series
+        type: string
+        property: c8y_Kpi.series
+        description: Series
+        required: true
+
+      - name: max
+        type: float
+        property: c8y_Kpi.max
+        description: Maximum
+
+      - name: min
+        type: float
+        property: c8y_Kpi.min
+        description: Minimum
+
+      - name: unit
+        type: string
+        property: c8y_Kpi.unit
+        description: Unit
+
+      - name: color
+        type: string
+        property: c8y_Kpi.color
+        description: Color
+    
+    bodyTemplates:
+      - type: jsonnet
+        template: "{type:'c8y_Kpi'}"
+
+  - name: get
+    description: Get a datapoint
+    method: GET
+    path: inventory/managedObjects/{id}
+    exampleList:
+      - command: c8y devmgmt datapoints get --id 12345
+        description: Get a single datapoint
+    pathParameters:
+      - name: id
+        type: '[]id'
+        pipeline: true
+        description: Datapoint id
+
+  - name: delete
+    description: Delete a datapoint
+    method: DELETE
+    path: inventory/managedObjects/{id}
+    exampleList:
+      - command: c8y devmgmt datapoints delete --id 12345
+        description: Delete a single datapoint
+    pathParameters:
+      - name: id
+        type: '[]id'
+        pipeline: true
+        description: Datapoint id
+
+  - name: update
+    description: Update a datapoint
+    method: PUT
+    path: inventory/managedObjects/{id}
+    exampleList:
+      - command: c8y devmgmt datapoints list | c8y devmgmt datapoints update --min 0
+        description: Change the minimum of all datapoints
+    pathParameters:
+      - name: id
+        type: '[]id'
+        pipeline: true
+        description: Datapoint id
+    body:
+      - name: name
+        type: string
+        description: Name
+
+      - name: description
+        type: string
+        property: _diff.description
+        description: Description
+
+      - name: label
+        type: string
+        property: _diff.label
+        description: Label
+
+      - name: fragment
+        type: string
+        property: _diff.fragment
+        description: Fragment
+
+      - name: series
+        type: string
+        property: _diff.series
+        description: Series
+
+      - name: max
+        type: float
+        property: _diff.max
+        description: Maximum
+
+      - name: min
+        type: float
+        property: _diff.min
+        description: Minimum
+
+      - name: unit
+        type: string
+        property: _diff.unit
+        description: Unit
+
+      - name: color
+        type: string
+        property: _diff.color
+        description: Color
+
+    bodyTemplates:
+      - type: jsonnet
+        applyLast: false
+        template: "{'c8y_Kpi': if std.isObject(input.value) then std.get(input.value, 'c8y_Kpi', {}) else {} + $._diff, _diff::null}"
