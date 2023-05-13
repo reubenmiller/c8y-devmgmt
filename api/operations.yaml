@@ -16,7 +16,7 @@ commands:
         command: c8y devmgmt shell execute --device 12345 --command "ls -l"
     body:
       - name: device
-        type: '[]device'
+        type: device[]
         property: deviceId
         required: true
         pipeline: true
@@ -43,7 +43,7 @@ commands:
         command: c8y devmgmt shell restart --device 12345
     body:
       - name: device
-        type: '[]device'
+        type: device[]
         property: deviceId
         required: true
         pipeline: true
@@ -68,7 +68,7 @@ commands:
         command: c8y devmgmt shell getLogFile --device 12345
     body:
       - name: device
-        type: '[]device'
+        type: device[]
         property: deviceId
         required: true
         pipeline: true
@@ -119,7 +119,7 @@ commands:
         command: c8y operations list --device 1234 --status EXECUTING | c8y devmgmt operations cancel
     pathParameters:
       - name: id
-        type: '[]id'
+        type: id[]
         required: true
         pipeline: true
         description: Operation id
