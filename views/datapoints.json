@@ -3,7 +3,7 @@
     "definitions": [
         {
             "name": "datapoint",
-            "fragment": "c8y_Kpi",
+            "fragments": ["c8y_Kpi"],
             "priority": 400,
             "columns": [
                 "id",
