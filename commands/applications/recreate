@@ -24,11 +24,15 @@ POSITIONAL ARGS
 
 FLAGS
     --parent <name>     Parent tenant name. Defaults to 'management'
+    --help, -h          Show this help
 
 EXAMPLES
 
     c8y devmgmt applications recreate devicemanagement
     # Recreated the device management application by recloning it
+
+    c8y devmgmt applications recreate devicemanagement --force
+    # Recreated the device management application by recloning it and don't prompt for confirmation
 
     c8y devmgmt applications recreate devicemanagement --parent myparenttenant
     # Recreated the device management application by cloning it from a given parent tenant
