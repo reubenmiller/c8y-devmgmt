@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+set -e
+
+APPLICATION_NAME=
+PARENT_TENANT="management"
+
+usage() {
+    cat <<EOT
+
+c8y devmgmt applications recreate <NAME>
+
+Recreate a previously cloned application and restore any assigned UI plugins
+
+This command will do the following steps to recreate an application that has been previously
+cloned from an application in the parent tenant.
+
+1. Save the list of UI plugins already configured
+2. Delete the existing plugin (in the current tenant)
+3. Clone the given application from the parent tenant to the current tenant
+4. Apply the UI plugins to the newly cloned application
+
+POSITIONAL ARGS
+    NAME            Application name to recreate
+
+FLAGS
+    --parent <name>     Parent tenant name. Defaults to 'management'
+    --help, -h          Show this help
+
+EXAMPLES
+
+    c8y devmgmt applications recreate devicemanagement
+    # Recreated the device management application by recloning it
+
+    c8y devmgmt applications recreate devicemanagement --force
+    # Recreated the device management application by recloning it and don't prompt for confirmation
+
+    c8y devmgmt applications recreate devicemanagement --parent myparenttenant
+    # Recreated the device management application by cloning it from a given parent tenant
+
+EOT
+}
+
+REST_ARGS=()
+
+case "$@" in
+    *--help*|*-h*)
+        usage
+        exit 0
+        ;;
+esac
+
+if [ $# -lt 1 ]; then
+    echo "Missing application name" >&2
+    usage
+    exit 1
+fi
+
+APPLICATION_NAME="$1"
+shift
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --parent)
+            PARENT_TENANT="$2"
+            shift
+            ;;
+        --help|-h)
+            usage
+            exit 0
+            ;;
+        *)
+            REST_ARGS+=("$1")
+            ;;
+    esac
+    shift
+done
+
+set -- "${REST_ARGS[@]}"
+
+# Save existing plugin information if it exists
+APPLICATION_CONFIG=$(c8y applications list --name "$APPLICATION_NAME" --filter "owner.tenant.id neq $PARENT_TENANT" --select "config.**")
+
+# Remove the existing application (if present)
+c8y applications list --name "$APPLICATION_NAME" --filter "owner.tenant.id neq $PARENT_TENANT" | c8y applications delete --force
+
+# Clone the previous application and apply UI plugins to the cloned application (if there were previously any)
+c8y applications list --name "$APPLICATION_NAME" --filter "owner.tenant.id eq $PARENT_TENANT" \
+| c8y applications copy --confirmText "Recreating $APPLICATION_NAME" "${REST_ARGS[@]}"  \
+| c8y applications update --template "{name: '$APPLICATION_NAME', contextPath: $.name, key: $.name + '-application-key' }" --force \
+| c8y applications update --template "$APPLICATION_CONFIG" --force
